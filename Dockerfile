@@ -1,10 +1,8 @@
 FROM debian:latest
-MAINTAINER 6c0d
+MAINTAINER sysC0D
 
 #Var OpenVPN
-ENV AUTHPAM no
 ENV USEROVPN s6c0d
-ENV PWDOVPN WTF!!addpwd
 
 #Install Openvpn
 RUN apt-get update && apt-get install -y \
@@ -26,8 +24,15 @@ COPY src/conf_ovpn/server_ovpn.conf /etc/openvpn/
 #Add easyrsa3
 RUN cd /etc/openvpn && git clone https://github.com/OpenVPN/easy-rsa.git
 
-#Add script
+#Create Dir
 RUN mkdir /var/tools \
 	&& mkdir /etc/openvpn/clients
+
+#Add script
 COPY src/scripts/genere_user_ovpn.sh /var/tools
 RUN chmod 755 /var/tools/genere_user_ovpn.sh
+
+#Auto launch
+COPY src/scripts//entrypoint.sh /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
