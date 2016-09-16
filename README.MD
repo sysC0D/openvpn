@@ -1,6 +1,6 @@
 #Docker-OPENVPN
 ##Beta version
-This container can run as an OpenVPN server, it provide client conf for all plateform.
+This container run an OpenVPN server, it provide client conf for all plateform.
 
 For running the container:
 
