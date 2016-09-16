@@ -42,6 +42,10 @@ cp -Rf easy-rsa/easyrsa3 clientside/
 cp -Rf easy-rsa/easyrsa3 serverside/
 
 echo ""
+echo "1.3 -> Define servername"
+nameserver="server_s6c0d"
+
+echo ""
 echo "2 -> Genere CA"
 cd /etc/openvpn/serverside/easyrsa3
 ./easyrsa init-pki
@@ -56,14 +60,35 @@ expect "Your new CA certificate file for publishing is at"
 EOF
 
 echo ""
-echo "2.1 -> Build DH"
+echo "2.2 -> Genere .crt server"
+cd /etc/openvpn/serverside/easyrsa3
+/usr/bin/expect<<EOF
+set timeout -1
+eval spawn "./easyrsa gen-req $nameserver nopass"
+expect "Common Name (eg: your user, host, or server name)" { send "$nameserver\r" }
+expect "key: /etc/openvpn/clientside/easyrsa3/pki/private"
+EOF
+
+echo ""
+echo "2.3 -> Sign req server"
+/usr/bin/expect<<EOF
+set timeout -1
+eval spawn "./easyrsa sign-req server $nameserver"
+expect "Confirm request details:" {send "yes\r"}
+expect "Enter pass phrase for /etc/openvpn/serverside/easyrsa3/pki/private/ca.key:" {send "$pwdca\r"}
+expect "Certificate created at:"
+EOF
+
+echo ""
+echo "2.4 -> Build DH"
 ./easyrsa gen-dh
+openvpn --genkey --secret ta.key
 
 echo ""
 echo "3.1 -> Verify User"
 if [ -z "$USEROVPN" ]; then
 	echo "Username will be default user : s6c0d"
-  	nameuser="6c0d"
+  	nameuser="s6c0d"
 else
 	nameuser=$USEROVPN
 fi
@@ -85,7 +110,7 @@ cd /etc/openvpn/serverside/easyrsa3
 ./easyrsa import-req /etc/openvpn/clientside/easyrsa3/pki/reqs/$nameuser.req $nameuser
 
 echo ""
-echo "3.4 -> Sign req"
+echo "3.4 -> Sign req client"
 /usr/bin/expect<<EOF
 set timeout -1
 eval spawn "./easyrsa sign-req client $nameuser"
@@ -123,18 +148,18 @@ cd /etc/openvpn/clients/$nameuser
 cp /etc/openvpn/serverside/easyrsa3/pki/issued/$nameuser.crt .
 cp /etc/openvpn/serverside/easyrsa3/pki/ca.crt .
 cp /etc/openvpn/clientside/easyrsa3/pki/private/$nameuser.key .
-openvpn --genkey --secret ta.key
+cp /etc/openvpn/serverside/easyrsa3/ta.key .
 cd /etc/openvpn/clients/
 tar -cvf $nameuser.tar $nameuser
 
 echo ""
 echo "6 -> Prepare conf server"
 cd /etc/openvpn/
-cp /etc/openvpn/serverside/easyrsa3/pki/issued/$nameuser.crt server.crt
+cp /etc/openvpn/serverside/easyrsa3/pki/issued/$nameserver.crt server.crt
 cp /etc/openvpn/serverside/easyrsa3/pki/ca.crt .
-cp /etc/openvpn/clientside/easyrsa3/pki/private/$nameuser.key server.key
+cp /etc/openvpn/serverside/easyrsa3/pki/private/$nameserver.key server.key
 cp /etc/openvpn/serverside/easyrsa3/pki/dh.pem dh2048.pem
-cp /etc/openvpn/clients/$nameuser/ta.key .
+cp /etc/openvpn/serverside/easyrsa3/ta.key .
 
 echo ""
 echo "7 -> Add iptables"
