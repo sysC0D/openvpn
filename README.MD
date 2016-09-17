@@ -7,6 +7,8 @@ When this process will be finish, you could find client configuration in shared 
 
 ## Quick start
 * For running the container:
+
+
 	docker run -d -v /your/path/:/etc/openvpn/clients -p 1194:1194/udp --privileged --cap-add=NET_ADMIN --name openvpn-server sysc0d/openvpn
 
 
