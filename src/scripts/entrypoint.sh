@@ -1,9 +1,10 @@
 #!/bin/sh
 
 # Generate conf OpenVPN
-/var/tools/genere_user_ovpn.sh
+if [ ! -f /etc/openvpn/clients/*.tar ]; then
+	/var/tools/genere_user_ovpn.sh
+fi
 
 # Start Openvpn
 cd /etc/openvpn 
-exec openvpn --config server_ovpn.conf
-exec "$@"
+openvpn --config server_ovpn.conf
