@@ -13,8 +13,7 @@ RUN apt-get update && apt-get install -y \
 	net-tools \
 	iptables \
 	git \
-	nano \
-	#&& apt-get clean \
+	&& apt-get clean \
         && rm -rf /tmp/* /var/tmp/*  \
         && rm -rf /var/lib/apt/lists/*
 
@@ -33,6 +32,6 @@ COPY src/scripts/genere_user_ovpn.sh /var/tools
 RUN chmod 755 /var/tools/genere_user_ovpn.sh
 
 #Auto launch
-COPY src/scripts//entrypoint.sh /entrypoint.sh
+COPY src/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
