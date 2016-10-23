@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
 	net-tools \
 	iptables \
 	git \
+	supervisor \
 	&& apt-get clean \
         && rm -rf /tmp/* /var/tmp/*  \
         && rm -rf /var/lib/apt/lists/*
@@ -27,9 +28,12 @@ RUN cd /etc/openvpn && git clone https://github.com/OpenVPN/easy-rsa.git
 RUN mkdir /var/tools \
 	&& mkdir /etc/openvpn/clients
 
-#Add script
+#Add script OpenVPN
 COPY src/scripts/genere_user_ovpn.sh /var/tools
 RUN chmod 755 /var/tools/genere_user_ovpn.sh
+
+#Add script Supervisord
+COPY src/conf_supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 #Auto launch
 COPY src/scripts/entrypoint.sh /entrypoint.sh
