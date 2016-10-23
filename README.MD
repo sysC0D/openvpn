@@ -5,7 +5,7 @@ For get this Docker, just launch docker pull command.
 During first run, this docker will generate server and client configuration (please waiting few minutes during this process).  
 When this process will be finish, you could find client configuration in shared volume.  
 
-If you want update your client and server configuration, just remove *.tar in shared volume and run a new docker. 
+If you want update your client and server configuration, just remove *.tar in shared volume and run a new docker (after deleted old). 
 
 ## Quick start
 * For running the container :
