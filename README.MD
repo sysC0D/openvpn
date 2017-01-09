@@ -9,10 +9,19 @@ If you want update your client and server configuration, just remove *.tar in sh
 
 ## Quick start
 * For running the container :
+```bash
+docker run -d -v /your/path/:/etc/openvpn/clients -p 1194:1194/udp --privileged --cap-add=NET_ADMIN --name openvpn-server sysc0d/openvpn
+```
 
-
-	docker run -d -v /your/path/:/etc/openvpn/clients -p 1194:1194/udp --privileged --cap-add=NET_ADMIN --name openvpn-server sysc0d/openvpn
-
+## Client configuration
+Download generated conf client (in shared volume) on your client machine.
+Only for Linux user, add theses lines :
+```bash
+script-security 2
+up /etc/openvpn/update-resolv-conf
+down /etc/openvpn/update-resolv-conf
+```
+Add conf in directory OpenVPN and launch connction :-)
 
 
 
