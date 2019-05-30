@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:stable
 MAINTAINER sysC0D
 
 #Var OpenVPN
