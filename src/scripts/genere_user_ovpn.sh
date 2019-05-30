@@ -23,7 +23,7 @@ if [ -d "serverside" ]; then
 fi
 
 echo ""
-echo "1.1 -> Init conf var" 
+echo "1.1 -> Init conf var"
 cd /etc/openvpn/easy-rsa/easyrsa3
 cp vars.example vars
 echo "set_var EASYRSA_REQ_COUNTRY    \"US\"" >> vars
@@ -53,8 +53,8 @@ pwdca=`makepasswd --chars=20`
 /usr/bin/expect<<EOF
 set timeout -1
 eval spawn "./easyrsa build-ca"
-expect "Enter PEM pass phrase:" { send "$pwdca\r" }
-expect "Verifying - Enter PEM pass phrase:" { send "$pwdca\r" }
+expect "Enter New CA Key Passphrase:" { send "$pwdca\r" }
+expect "Re-Enter New CA Key Passphrase:" { send "$pwdca\r" }
 expect "Common Name (eg: your user, host, or server name)" { send "6c0dVPN\r" }
 expect "Your new CA certificate file for publishing is at"
 EOF
@@ -94,7 +94,7 @@ else
 fi
 
 echo ""
-echo "3.2 -> Genere $nameuser.key" 
+echo "3.2 -> Genere $nameuser.key"
 cd /etc/openvpn/clientside/easyrsa3
 ./easyrsa init-pki
 /usr/bin/expect<<EOF
