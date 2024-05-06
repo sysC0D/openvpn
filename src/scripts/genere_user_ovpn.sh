@@ -43,7 +43,7 @@ cp -Rf easy-rsa/easyrsa3 serverside/
 
 echo ""
 echo "1.3 -> Define servername"
-nameserver="server_s6c0d"
+nameserver="server_an0nym0us"
 
 echo ""
 echo "2 -> Genere CA"
@@ -51,11 +51,12 @@ cd /etc/openvpn/serverside/easyrsa3
 ./easyrsa init-pki
 pwdca=`makepasswd --chars=20`
 /usr/bin/expect<<EOF
+exp_internal 1
 set timeout -1
 eval spawn "./easyrsa build-ca"
 expect "Enter New CA Key Passphrase:" { send "$pwdca\r" }
-expect "Re-Enter New CA Key Passphrase:" { send "$pwdca\r" }
-expect "Common Name (eg: your user, host, or server name)" { send "6c0dVPN\r" }
+expect "Confirm New CA Key Passphrase:" { send "$pwdca\r" }
+expect "Common Name (eg: your user, host, or server name)" { send "an0nVPN\r" }
 expect "Your new CA certificate file for publishing is at"
 EOF
 
@@ -87,8 +88,8 @@ openvpn --genkey --secret ta.key
 echo ""
 echo "3.1 -> Verify User"
 if [ -z "$USEROVPN" ]; then
-	echo "Username will be default user : s6c0d"
-  	nameuser="s6c0d"
+	echo "Username will be default user : an0nym0us"
+	nameuser="an0nym0us"
 else
 	nameuser=$USEROVPN
 fi
@@ -137,8 +138,10 @@ cert $nameuser.crt
 key $nameuser.key
 tls-auth ta.key 1
 key-direction 1
-cipher AES-256-CBC
-comp-lzo
+cipher AES-256-GCM
+data-ciphers AES-256-GCM:AES-128-GCM:CHACHA20-POLY1305
+compress lz4-v2
+allow-compression yes
 verb 3
 EOL
 
